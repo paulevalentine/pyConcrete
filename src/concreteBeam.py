@@ -51,10 +51,10 @@ class RectBeam(structuralConcrete.Concrete):
 
         return vcap
 
-    def shear_cap_with_links(self, asw : float, sv : float, theta : float)->float:
+    def shear_cap_with_links(self, asw : float, sv : float, theta : float, p:str = "yes")->float:
         """ check the shear capacity of a section if shear reinforcement is provided """
         # check to make sure max link spacing provided
-        if(sv > 0.75*self.effective_depth):
+        if(sv > 0.75*self.effective_depth and p=="yes"):
             print("The links spacing specified is greater than the max spacing")
         f = theta * math.pi/180
 
@@ -65,7 +65,8 @@ class RectBeam(structuralConcrete.Concrete):
         self.vMax = self.b * self.effective_depth * 0.90 * 0.60 * (1 - self.fck / 250) * fcd / (1 / math.tan(f) + math.tan(f)) * (1 / 1000)
 
         vcap = min(v, self.vMax)
-        print(f"The shear capacity of the section with links = {vcap:.2f} kN")
+        if p == "yes":
+            print(f"The shear capacity of the section with links = {vcap:.2f} kN")
 
         return vcap
 
@@ -161,9 +162,22 @@ class RectBeam(structuralConcrete.Concrete):
        plt.legend()
        plt.show()
 
-    def print_shear_capacity_curve(self)->None:
-        print("This does nothing yet")
-        #todo write code for the shear curve
+    def print_shear_capacity_curve(self, link_diam:int, link_legs:int)->None:
+        links_area = math.pi * link_diam**2 / 4 * link_legs
+        max_spacing = 0.75 * self.effective_depth
+        x = np.linspace(75, max_spacing+75, 100)
+        y = np.array([])
+        for vals in x:
+            vcap = self.shear_cap_with_links(links_area, vals, 22,  "no")
+            y = np.append(y,vcap)
+        plt.plot(x,y, label="Capacity curve")
+        plt.xlabel("Link spacing (mm)")
+        plt.ylabel("ULS Shear Capacity (kN)")
+        plt.title(f"{self.b}mmx{self.h}mm Beam in Shear for theta = 22 degs")
+        plt.axvline(max_spacing, color='r', linestyle='--', label=f"Max spacing = {max_spacing:.2f}mm")
+        plt.grid()
+        plt.legend()
+        plt.show()
 
 
 
