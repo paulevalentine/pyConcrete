@@ -14,7 +14,6 @@ class RectBeam(structuralConcrete.Concrete):
         self.gc = 1.5 # partial factor on material strength
         self.fyk = 500 # characteristic strength for high yield steel
         self.acc = 0.85
-
     def bending_steel_required(self, moment: float)->float:
         """ This function does not establish the steel if compression steel is required """
 
@@ -63,8 +62,8 @@ class RectBeam(structuralConcrete.Concrete):
 
         self.vMax = self.b * self.effective_depth * 0.90 * 0.60 * (1 - self.fck / 250) * fcd / (1 / math.tan(f) + math.tan(f)) * (1 / 1000)
 
-        vCap = min(v, self.vMax)
-        print(f"The shear capacity of the section with links = {vCap:.2f} kN")
+        vcap = min(v, self.vMax)
+        print(f"The shear capacity of the section with links = {vcap:.2f} kN")
 
         return vcap
 
