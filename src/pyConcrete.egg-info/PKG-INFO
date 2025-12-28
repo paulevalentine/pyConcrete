@@ -2,3 +2,4 @@ Metadata-Version: 2.4
 Name: pyConcrete
 Version: 2025.0.0
 Requires-Dist: numpy
+Requires-Dist: matplotlib

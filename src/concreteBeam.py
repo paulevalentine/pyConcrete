@@ -1,5 +1,7 @@
 import structuralConcrete
 import math
+import matplotlib.pyplot as plt
+import numpy as np
 
 class RectBeam(structuralConcrete.Concrete):
     """ Reinforced concrete beam calculations """
@@ -14,13 +16,13 @@ class RectBeam(structuralConcrete.Concrete):
         self.gc = 1.5 # partial factor on material strength
         self.fyk = 500 # characteristic strength for high yield steel
         self.acc = 0.85
-    def bending_steel_required(self, moment: float)->float:
-        """ This function does not establish the steel if compression steel is required """
-
         delta = 1
         kMax = 0.6 * delta - 0.18 * delta ** 2 - 0.21
-        m_max = kMax * (self.b * self.effective_depth ** 2 * self.fck) * 10 ** -6
-        if moment > m_max:
+        self.m_max = kMax * (self.b * self.effective_depth ** 2 * self.fck) * 10 ** -6
+    def bending_steel_required(self, moment: float, p: str = "yes")->float:
+        """ This function does not establish the steel if compression steel is required """
+
+        if moment > self.m_max:
             print(
                 f'Compression steel is require. The maximum moment the section can take without compression reinforcement is {m_max :.2f}kNm')
             return 0
@@ -32,8 +34,8 @@ class RectBeam(structuralConcrete.Concrete):
 
         # calculate the requited bending steel
         ast = moment * 10 ** 6 / (0.87 * 500 * z)
-        print(f"The area of longitudinal bending steel required = {ast:.2f}mm2")
-
+        if p == "yes":
+            print(f"The area of longitudinal bending steel required = {ast:.2f}mm2")
         return ast
 
     def shear_cap_no_links(self, ast_prov : float)->float:
@@ -134,3 +136,35 @@ class RectBeam(structuralConcrete.Concrete):
                 print('FAIL')
         else:
             print('No designed shear reinforcement required')
+
+    # ------ print capacities ----- #
+
+    def print_bending_capacity_curve(self)->None:
+       y = np.linspace(0,self.m_max,100)
+       x = np.array([])
+       for vals in y:
+           ast = self.bending_steel_required(vals, "n")
+           x = np.append(x,ast)
+       plt.plot(x,y, label="Capacity curve")
+       plt.xlabel("Area of bending steel (mm2)")
+       plt.ylabel("ULS Bending Capacity (kNm)")
+       a = math.pi * 16**2
+       b = math.pi * 20**2
+       c = math.pi * 25**2
+       d = math.pi * 32**2
+       plt.axvline(a, color='r', linestyle='--', label="4H16")
+       plt.axvline(b, color='g', linestyle='--', label="4H20")
+       plt.axvline(c, color='b', linestyle='--',label="4H25")
+       plt.axvline(d, color='y', linestyle='--', label="4H32")
+       plt.title(f"{self.b}mmx{self.h}mm Beam in Bending")
+       plt.grid()
+       plt.legend()
+       plt.show()
+
+    def print_shear_capacity_curve(self)->None:
+        print("This does nothing yet")
+        #todo write code for the shear curve
+
+
+
+
