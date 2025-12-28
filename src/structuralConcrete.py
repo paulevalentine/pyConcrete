@@ -32,7 +32,7 @@ class Concrete(object):
         """ Mean compressive strength as a function of time """
         return self.fcm * self.bcc(s,t)
 
-    def fckt(self, s:float, t:float)->np.ndarray:
+    def fckt(self, s:float, t)->np.ndarray:
         """ Characteristic compressive strength as a function of time """
         # Convert to numpy arrays to handle conditional logic across elements
         t = np.asanyarray(t)
