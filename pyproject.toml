@@ -3,5 +3,6 @@ name="pyConcrete"
 version="2025.0.0"
 dependencies = [
     "numpy",
-    "matplotlib"
+    "matplotlib",
+    "sympy"
 ]
