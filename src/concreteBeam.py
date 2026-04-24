@@ -19,12 +19,13 @@ class RectBeam(structuralConcrete.Concrete):
         delta = 1
         kMax = 0.6 * delta - 0.18 * delta ** 2 - 0.21
         self.m_max = kMax * (self.b * self.effective_depth ** 2 * self.fck) * 10 ** -6
+
     def bending_steel_required(self, moment: float, p: str = "yes")->float:
         """ This function does not establish the steel if compression steel is required """
 
         if moment > self.m_max:
             print(
-                f'Compression steel is require. The maximum moment the section can take without compression reinforcement is {m_max :.2f}kNm')
+                f'Compression steel is require. The maximum moment the section can take without compression reinforcement is {self.m_max :.2f}kNm')
             return 0
 
         k = moment * 10 ** 6 / (self.b * self.effective_depth ** 2 * self.fck)

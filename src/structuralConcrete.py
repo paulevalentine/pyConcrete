@@ -16,6 +16,7 @@ class Concrete(object):
 
         # set the value of the mean tensile strength fctm
         self.fctm = self.calc_mean_tensile_strength()
+        self.fctk = 0.70 * self.fctm
 
         # Young's modulus in MPa
         #self.Ecm = 22 * (self.fcm / 10)**0.30 *10**3
